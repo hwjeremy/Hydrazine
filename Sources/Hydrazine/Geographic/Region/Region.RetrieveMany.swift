@@ -20,7 +20,7 @@ extension Region {
         id indexid: Int? = nil,
         name: String? = nil,
         abbreviation: String? = nil
-    ) async throws -> Array<Self>
+    ) async throws(HydrazineError) -> Array<Self>
     where O: ProvidesSession, O: ProvidesConfiguration {
         
         return try await Self.retrieveMany(
@@ -48,7 +48,7 @@ extension Region {
         id indexid: Int? = nil,
         name: String? = nil,
         abbreviation: String? = nil
-    ) async throws -> Array<Self> {
+    ) async throws(HydrazineError) -> Array<Self> {
         
         guard limit > 0 else {
             throw HydrazineError(clientFacingFriendlyMessage: "Limit must be > 0")

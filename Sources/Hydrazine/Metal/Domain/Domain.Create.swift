@@ -11,7 +11,7 @@ extension Domain {
         configuration: C,
         session: S,
         name: String
-    ) async throws -> Domain {
+    ) async throws(HydrazineError) -> Domain {
         
         guard name.count <= Self.maximumNameLength else {
             throw HydrazineError(clientFacingFriendlyMessage: """

@@ -12,7 +12,7 @@ extension Region {
         name: String,
         abbreviation: String,
         country: Country
-    ) async throws -> Region
+    ) async throws(HydrazineError) -> Region
     where O: ProvidesSession, O: ProvidesConfiguration {
         
         return try await Self.create(
@@ -31,7 +31,7 @@ extension Region {
         name: String,
         abbreviation: String,
         country: Country
-    ) async throws -> Region {
+    ) async throws(HydrazineError) -> Region {
         
         guard name.count <= Self.maximumNameLength else {
             throw HydrazineError(clientFacingFriendlyMessage: """

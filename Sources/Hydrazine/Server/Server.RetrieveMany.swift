@@ -23,7 +23,7 @@ extension Server {
         limit: Int = 10,
         offset: Int = 0,
         id publicId: String? = nil
-    ) async throws -> Array<Self>
+    ) async throws(HydrazineError) -> Array<Self>
     where O: ProvidesSession, O: ProvidesConfiguration {
         
         return try await Self.retrieveMany(
@@ -46,7 +46,7 @@ extension Server {
         limit: Int = 10,
         offset: Int = 0,
         id publicId: String? = nil
-    ) async throws -> Array<Self> {
+    ) async throws(HydrazineError) -> Array<Self> {
         
         guard limit > 0 else {
             throw HydrazineError(

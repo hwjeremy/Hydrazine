@@ -11,7 +11,7 @@ extension Country {
         in context: O,
         name: String,
         iso3166a2: String
-    ) async throws -> Country
+    ) async throws(HydrazineError) -> Country
     where O: ProvidesSession, O: ProvidesConfiguration {
         
         return try await Self.create(
@@ -27,7 +27,7 @@ extension Country {
         session: S,
         name: String,
         iso3166a2: String
-    ) async throws -> Country {
+    ) async throws(HydrazineError) -> Country {
         
         guard name.count <= Self.maximumNameLength else {
             throw HydrazineError(clientFacingFriendlyMessage: """

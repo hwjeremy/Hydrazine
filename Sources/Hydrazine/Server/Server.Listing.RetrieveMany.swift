@@ -23,7 +23,7 @@ extension Server.Listing {
         offset: Int = 0,
         country: Country? = nil,
         region: Region? = nil
-    ) async throws -> Array<Self>
+    ) async throws(HydrazineError) -> Array<Self>
     where O: ProvidesConfiguration, O: ProvidesSession{
         
         return try await Self.retrieveMany(
@@ -48,7 +48,7 @@ extension Server.Listing {
         offset: Int = 0,
         country: Country? = nil,
         region: Region? = nil
-    ) async throws -> Array<Self> {
+    ) async throws(HydrazineError) -> Array<Self> {
         
         guard limit > 0 else {
             throw HydrazineError(

@@ -17,7 +17,7 @@ extension Machine {
         rack: Rack,
         architecture: Machine.Architecture,
         operatingSystem: Machine.OperatingSystem
-    ) async throws -> Self
+    ) async throws(HydrazineError) -> Self
     where O: ProvidesConfiguration, O: ProvidesSession {
      
         return try await Machine.create(
@@ -46,7 +46,7 @@ extension Machine {
         rack: Rack,
         architecture: Machine.Architecture,
         operatingSystem: Machine.OperatingSystem
-    ) async throws -> Self {
+    ) async throws(HydrazineError) -> Self {
         
         guard ramMegabytes <= Self.maximumRamMegabytes else {
             throw HydrazineError(clientFacingFriendlyMessage: """

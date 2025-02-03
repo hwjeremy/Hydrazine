@@ -105,13 +105,27 @@ extension Session {
     }
     
     /// Return a `Session` from the Apple device Keychain, if one exists
-    public static func fromKeyChain() throws -> Session? {
+    public static func fromKeyChain() throws(HydrazineError) -> Session? {
+        
+        return try Self.fromKeyChain(log: PlaceboLogType())
+        
+    }
+    
+    public static func fromKeyChain<L: MayLogHydrazineErrors>(
+        log: L
+    ) throws(HydrazineError) -> Session? {
 
         var result: CFTypeRef?
         let status = SecItemCopyMatching(Self.keyChainQuery, &result)
         guard status != errSecItemNotFound else { return nil }
         guard status == errSecSuccess else {
-            throw KeyChainError.unhandledError(status: status)
+            Self.removeFromKeyChain { _ in return }
+            throw HydrazineError(clientFacingFriendlyMessage: """
+Hydrazine was unable to load a Session from the system Keychain
+""",
+                                 technicalMessage: """
+Session.fromKeychain, Keychain unhandled error, status: \(status)
+""", log: log)
         }
 
         guard let data = result as? [String: Any],
@@ -122,7 +136,14 @@ extension Session {
                 data[kSecAttrAccount as String] as? String ?? "nil"
             )
         else {
-            throw KeyChainError.unexpectedData
+            Self.removeFromKeyChain { _ in return }
+            throw HydrazineError(clientFacingFriendlyMessage: """
+Hydrazine found unexpected data in the system Keychain while attempting to loa\
+d a Session
+""",
+                                 technicalMessage: """
+Session.fromKeychain, unexpected data
+""", log: log)
         }
         
         return Session(

@@ -11,7 +11,7 @@ extension Domain {
         configuration: C,
         session: S,
         id: Int
-    ) async throws-> Self? {
+    ) async throws(HydrazineError) -> Self? {
         
         return try await Self.retrieveMany(
             configuration: configuration,

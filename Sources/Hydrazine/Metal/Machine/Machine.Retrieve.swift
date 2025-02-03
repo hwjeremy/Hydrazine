@@ -11,7 +11,7 @@ extension Machine {
     public static func retrieve<O>(
         in context: O,
         id: String
-    ) async throws -> Self?
+    ) async throws(HydrazineError) -> Self?
     where O: ProvidesSession, O: ProvidesConfiguration {
         
         return try await Self.retrieve(
@@ -26,7 +26,7 @@ extension Machine {
         configuration: C,
         session: S,
         id: String
-    ) async throws -> Self? {
+    ) async throws(HydrazineError) -> Self? {
         
         return try await Self.retrieveMany(
             configuration: configuration,

@@ -21,7 +21,7 @@ extension Session {
         configuration: C,
         credential: ASAuthorizationAppleIDCredential,
         name: String? = nil
-    ) async throws -> Self {
+    ) async throws(HydrazineError) -> Self {
         
         if let name = name, name.count > 128 {
             throw HydrazineError(clientFacingFriendlyMessage: "Name too long")
@@ -51,7 +51,7 @@ Could not convert Apple ID token to a string
         configuration: C,
         appleIdCredentialToken tokenString: String,
         name: String? = nil
-    ) async throws -> Self {
+    ) async throws(HydrazineError) -> Self {
         
         let payload = CreatePayload(token: tokenString, name: name)
         

@@ -12,7 +12,7 @@ extension Server {
         ipv4Port: UInt16,
         ipv6Port: UInt16,
         machine: Machine
-    ) async throws -> Self
+    ) async throws(HydrazineError) -> Self
     where O: ProvidesConfiguration, O: ProvidesSession {
         
         return try await Self.create(
@@ -31,7 +31,7 @@ extension Server {
         ipv4Port: UInt16,
         ipv6Port: UInt16,
         machine: Machine
-    ) async throws -> Self {
+    ) async throws(HydrazineError) -> Self {
         
         let payload = CreatePayload(
             ipv4Port: Int(ipv4Port),

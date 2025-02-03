@@ -13,7 +13,7 @@ extension Rack {
         name: String,
         region: Region,
         provider: Machine.Provider
-    ) async throws -> Rack
+    ) async throws(HydrazineError) -> Rack
     where O: ProvidesSession, O: ProvidesConfiguration {
      
         return try await Self.create(
@@ -33,7 +33,7 @@ extension Rack {
         name: String,
         region: Region,
         provider: Machine.Provider
-    ) async throws -> Rack {
+    ) async throws(HydrazineError) -> Rack {
         
         guard name.count <= Self.maximumNameLength else {
             throw HydrazineError(clientFacingFriendlyMessage: """

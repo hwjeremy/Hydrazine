@@ -49,7 +49,7 @@ internal struct Request {
         internal static func make(
             path: String,
             apiKey: Data
-        ) throws -> String {
+        ) throws(HydrazineError) -> String {
             
             let timestamp = Int(Date().timeIntervalSince1970)
             let timekey = timestamp - (timestamp % Self.timestampResolution)

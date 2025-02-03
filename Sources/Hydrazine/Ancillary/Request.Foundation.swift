@@ -21,7 +21,7 @@ extension Request {
         path: String,
         method: Self.Method,
         queryItems: Array<URLQueryItem> = []
-    ) async throws -> D {
+    ) async throws(HydrazineError) -> D {
         
         return try await Self.make(
             configuration: configuration,
@@ -39,7 +39,7 @@ extension Request {
         method: Self.Method,
         queryItems: Array<URLQueryItem> = [],
         session: S?
-    ) async throws -> D {
+    ) async throws(HydrazineError) -> D {
         
         let result: D = try await Self.make(
             configuration: configuration,
@@ -59,7 +59,7 @@ extension Request {
         path: String,
         method: Self.Method,
         requestBody: E
-    ) async throws -> Void {
+    ) async throws(HydrazineError) -> Void {
      
         return try await Self.make(
             configuration: configuration,
@@ -77,7 +77,7 @@ extension Request {
         method: Self.Method,
         requestBody: E,
         session: S?
-    ) async throws -> Void {
+    ) async throws(HydrazineError) -> Void {
      
         let _: Placebo = try await Self.make(
             configuration: configuration,
@@ -97,7 +97,7 @@ extension Request {
         method: Self.Method,
         queryItems: Array<URLQueryItem> = [],
         session: S?
-    ) async throws -> Void {
+    ) async throws(HydrazineError) -> Void {
      
         let _: Placebo = try await Self.make(
             configuration: configuration,
@@ -118,7 +118,7 @@ extension Request {
         queryItems: Array<URLQueryItem> = [],
         requestBody: E?,
         session: S?
-    ) async throws -> D {
+    ) async throws(HydrazineError) -> D {
         
         guard var urlComponents = URLComponents(
             string: configuration.apiEndpoint
@@ -171,7 +171,17 @@ API
     
         if let body = requestBody {
     
-            let jsonData = try Self.jsonEncoder.encode(body)
+            let jsonData: Data
+            do {
+                jsonData = try Self.jsonEncoder.encode(body)
+            } catch {
+                throw HydrazineError(
+                    clientFacingFriendlyMessage: """
+Hydrazine was unable to encode data for transmission to the API.
+"""
+                )
+            }
+
             request.httpBody = jsonData
             
             request.addValue(
@@ -185,10 +195,24 @@ API
         
         }
         
-        let (data, response) = try await URLSession.shared.data(
-            for: request,
-            delegate: nil
-        )
+        let data: Data
+        let response: URLResponse
+    
+        do {
+            (data, response) = try await URLSession.shared.data(
+                for: request,
+                delegate: nil
+            )
+        } catch {
+            throw HydrazineError(
+                clientFacingFriendlyMessage: """
+Hydrazine was unable to initialise a URLSession to transmit data to the API
+""",
+                technicalMessage: """
+Failed to initialise URLSession: \(error)
+"""
+            )
+        }
         
         guard let httpResponse = response as? HTTPURLResponse else {
             throw HydrazineError(clientFacingFriendlyMessage: """
@@ -242,7 +266,14 @@ The Hydrazine API responded to a request with a \(code) code\(m)
 """)
         }
 
-        let decoded = try Self.jsonDecoder.decode(D.self, from: data)
+        let decoded: D
+        do {
+            decoded = try Self.jsonDecoder.decode(D.self, from: data)
+        } catch {
+            throw HydrazineError(clientFacingFriendlyMessage: """
+Hydrazine was unable to decode data returned by the API
+""")
+        }
 
         return decoded
     

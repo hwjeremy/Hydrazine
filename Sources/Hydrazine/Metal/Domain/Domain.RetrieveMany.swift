@@ -22,7 +22,7 @@ extension Domain {
         limit: Int = 10,
         offset: Int = 0,
         id indexid: Int? = nil
-    ) async throws -> Array<Self> {
+    ) async throws(HydrazineError) -> Array<Self> {
         
         guard limit > 0 else {
             throw HydrazineError(clientFacingFriendlyMessage: "Limit must be > 0")

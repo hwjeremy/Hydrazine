@@ -26,7 +26,7 @@ extension Machine {
         region: Region? = nil,
         rack: Rack? = nil,
         provider: Machine.Provider? = nil
-    ) async throws -> Array<Self>
+    ) async throws(HydrazineError) -> Array<Self>
     where O: ProvidesConfiguration, O: ProvidesSession {
         
         return try await Machine.retrieveMany(
@@ -57,7 +57,7 @@ extension Machine {
         region: Region? = nil,
         rack: Rack? = nil,
         provider: Machine.Provider? = nil
-    ) async throws -> Array<Self> {
+    ) async throws(HydrazineError) -> Array<Self> {
         
         guard limit > 0 else {
             throw HydrazineError(

@@ -11,7 +11,7 @@ extension Rack {
         configuration: C,
         session: S,
         id: String
-    ) async throws -> Self? {
+    ) async throws(HydrazineError) -> Self? {
         
         return try await Rack.retrieveMany(
             configuration: configuration,
@@ -25,7 +25,7 @@ extension Rack {
         configuration: C,
         session: S,
         name: String
-    ) async throws -> Self? {
+    ) async throws(HydrazineError) -> Self? {
         
         return try await Rack.retrieveMany(
             configuration: configuration,

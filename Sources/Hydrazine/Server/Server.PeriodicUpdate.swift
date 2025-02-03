@@ -50,7 +50,7 @@ extension Server {
             clientCapacity: Int,
             clientsConnected: Int,
             health: Server.HealthStatus
-        ) async throws -> Void {
+        ) async throws(HydrazineError) -> Void {
             
             let payload = CreatePayload(
                 server: server.id,
