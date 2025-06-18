@@ -25,8 +25,10 @@ struct ServerTests {
         let s1 = try await Server.create(
             configuration: configuration,
             session: EPHEMERAL_FLEET_TEST_SESSION,
-            ipv4Port: 4001,
-            ipv6Port: 6001,
+            tcpIpv4Port: 4001,
+            tcpIpv6Port: 6001,
+            udpIpv4Port: 6101,
+            udpIpv6Port: 4101,
             machine: testData.machine
         )
         
@@ -55,8 +57,10 @@ struct ServerTests {
         let s1 = try await Server.create(
             configuration: configuration,
             session: EPHEMERAL_FLEET_TEST_SESSION,
-            ipv4Port: 4001,
-            ipv6Port: 6001,
+            tcpIpv4Port: 4001,
+            tcpIpv6Port: 6001,
+            udpIpv4Port: 6101,
+            udpIpv6Port: 4101,
             machine: testData.machine
         )
         
@@ -97,8 +101,10 @@ struct ServerTests {
         let s1 = try await Server.create(
             configuration: configuration,
             session: EPHEMERAL_FLEET_TEST_SESSION,
-            ipv4Port: 4001,
-            ipv6Port: 6001,
+            tcpIpv4Port: 4001,
+            tcpIpv6Port: 6001,
+            udpIpv4Port: 6101,
+            udpIpv6Port: 4101,
             machine: testData.machine
         )
         
@@ -112,7 +118,7 @@ struct ServerTests {
         )
         
         // Wait for Hydrazine to have time to updating listings
-        try await Task.sleep(for: .milliseconds(1500))
+        try await Task.sleep(for: .milliseconds(2001))
         
         let listings = try await Server.Listing.retrieveMany(
             configuration: configuration,
@@ -134,7 +140,7 @@ struct ServerTests {
         
     }
     
-    @Test("Observer Server.Listing appearance / falloff")
+    @Test("Observe Server.Listing appearance / falloff")
     func serverListingAppearAndFallOff() async throws -> Void {
         
         let configuration = TestConfiguration.fromCommandLine()
@@ -147,8 +153,10 @@ struct ServerTests {
         let s1 = try await Server.create(
             configuration: configuration,
             session: EPHEMERAL_FLEET_TEST_SESSION,
-            ipv4Port: 4001,
-            ipv6Port: 6001,
+            tcpIpv4Port: 4001,
+            tcpIpv6Port: 6001,
+            udpIpv4Port: 6101,
+            udpIpv6Port: 4101,
             machine: testData.machine
         )
         
@@ -161,8 +169,9 @@ struct ServerTests {
             health: .good
         )
         
-        // Wait so long that the listing should fall off
-        try await Task.sleep(for: .milliseconds(3500))
+        // Wait so long that the listing should fall off (at time of writing,
+        // the computation interval was 1000ms and the falloff was at 3500ms
+        try await Task.sleep(for: .milliseconds(4501))
         
         let listings = try await Server.Listing.retrieveMany(
             configuration: configuration,

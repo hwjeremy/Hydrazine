@@ -4,11 +4,6 @@
 //
 //  Created by Hugh on 4/1/2025.
 //
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#else
-import Foundation
-#endif
 
 
 extension Machine {
@@ -72,7 +67,7 @@ Offset must be >= 0
         }
         
         
-        var queryItems: Array<URLQueryItem> = [
+        var queryItems: Array<QueryItem> = [
             .init(name: "limit", value: "\(limit)"),
             .init(name: "offset", value: "\(offset)"),
             .init(name: "order", value: order.rawValue),

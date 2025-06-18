@@ -15,22 +15,34 @@ public struct Server: Hashable, Equatable, Identifiable, Sendable, Decodable {
     
     internal static let path = "/server"
     
+    public let tcpIpv4port: UInt16
+    public let tcpIpv6port: UInt16
+    public let udpIpv4port: UInt16
+    public let udpIpv6port: UInt16
+    
+    /// An identifier for game client / game server communication
+    ///
+    /// This ID is guaranteed to be unique among active `Server` instances,
+    /// but not among all `Server` instances over all time.
+    public let networkOperationsId: UInt32
+    
     internal let publicId: String
 
     public let ipv4: String?
     public let ipv6: String?
-    public let ipv4port: UInt16
-    public let ipv6port: UInt16
     public let disposition: Disposition
     
     public var id: String { return self.publicId }
     
     private enum CodingKeys: String, CodingKey {
         case publicId = "public_id"
+        case networkOperationsId = "network_operations_id"
         case ipv4
         case ipv6
-        case ipv4port
-        case ipv6port
+        case tcpIpv4port = "tcp_ipv4_port"
+        case tcpIpv6port = "tcp_ipv6_port"
+        case udpIpv4port = "udp_ipv4_port"
+        case udpIpv6port = "udp_ipv6_port"
         case disposition
     }
     

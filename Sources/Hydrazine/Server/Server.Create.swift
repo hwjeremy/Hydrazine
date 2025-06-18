@@ -9,8 +9,10 @@ extension Server {
 
     public static func create<O>(
         in context: O,
-        ipv4Port: UInt16,
-        ipv6Port: UInt16,
+        tcpIpv4Port: UInt16,
+        tcpIpv6Port: UInt16,
+        udpIpv4Port: UInt16,
+        udpIpv6Port: UInt16,
         machine: Machine
     ) async throws(HydrazineError) -> Self
     where O: ProvidesConfiguration, O: ProvidesSession {
@@ -18,8 +20,10 @@ extension Server {
         return try await Self.create(
             configuration: context,
             session: context,
-            ipv4Port: ipv4Port,
-            ipv6Port: ipv6Port,
+            tcpIpv4Port: tcpIpv4Port,
+            tcpIpv6Port: tcpIpv6Port,
+            udpIpv4Port: udpIpv4Port,
+            udpIpv6Port: udpIpv6Port,
             machine: machine
         )
         
@@ -28,14 +32,18 @@ extension Server {
     public static func create<C: ProvidesConfiguration, S: ProvidesSession>(
         configuration: C,
         session: S,
-        ipv4Port: UInt16,
-        ipv6Port: UInt16,
+        tcpIpv4Port: UInt16,
+        tcpIpv6Port: UInt16,
+        udpIpv4Port: UInt16,
+        udpIpv6Port: UInt16,
         machine: Machine
     ) async throws(HydrazineError) -> Self {
         
         let payload = CreatePayload(
-            ipv4Port: Int(ipv4Port),
-            ipv6Port: Int(ipv6Port),
+            tcpIpv4Port: Int(tcpIpv4Port),
+            tcpIpv6Port: Int(tcpIpv6Port),
+            udpIpv4Port: Int(udpIpv4Port),
+            udpIpv6Port: Int(udpIpv6Port),
             machine: machine.id
         )
         
@@ -52,8 +60,10 @@ extension Server {
     }
     
     private struct CreatePayload: Encodable {
-        let ipv4Port: Int
-        let ipv6Port: Int
+        let tcpIpv4Port: Int
+        let tcpIpv6Port: Int
+        let udpIpv4Port: Int
+        let udpIpv6Port: Int
         let machine: String
     }
     

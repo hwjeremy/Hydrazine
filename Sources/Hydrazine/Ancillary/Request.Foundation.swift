@@ -5,8 +5,10 @@
 //  Created by Hugh on 2/1/2025.
 //
 
-#if !os(Linux) && !os(Windows)
 import Foundation
+#if !os(macOS) && canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 
 
@@ -20,7 +22,7 @@ extension Request {
         configuration: C,
         path: String,
         method: Self.Method,
-        queryItems: Array<URLQueryItem> = []
+        queryItems: Array<QueryItem> = []
     ) async throws(HydrazineError) -> D {
         
         return try await Self.make(
@@ -37,7 +39,7 @@ extension Request {
         configuration: C,
         path: String,
         method: Self.Method,
-        queryItems: Array<URLQueryItem> = [],
+        queryItems: Array<QueryItem> = [],
         session: S?
     ) async throws(HydrazineError) -> D {
         
@@ -95,7 +97,7 @@ extension Request {
         configuration: C,
         path: String,
         method: Self.Method,
-        queryItems: Array<URLQueryItem> = [],
+        queryItems: Array<QueryItem> = [],
         session: S?
     ) async throws(HydrazineError) -> Void {
      
@@ -115,7 +117,7 @@ extension Request {
         configuration: C,
         path: String,
         method: Self.Method,
-        queryItems: Array<URLQueryItem> = [],
+        queryItems: Array<QueryItem> = [],
         requestBody: E?,
         session: S?
     ) async throws(HydrazineError) -> D {
@@ -131,7 +133,7 @@ with the Hydrazine API
 
         urlComponents.path += path
         if queryItems.count > 0 {
-            urlComponents.queryItems = queryItems
+            urlComponents.queryItems = queryItems.toUrlQueryItems()
         }
         
         guard let url = urlComponents.url else {
@@ -270,6 +272,10 @@ The Hydrazine API responded to a request with a \(code) code\(m)
         do {
             decoded = try Self.jsonDecoder.decode(D.self, from: data)
         } catch {
+            #if DEBUG
+            print(String(bytes: data, encoding: .utf8)!)
+            print(error)
+            #endif
             throw HydrazineError(clientFacingFriendlyMessage: """
 Hydrazine was unable to decode data returned by the API
 """)
@@ -287,4 +293,15 @@ Hydrazine was unable to decode data returned by the API
     }
     
 }
-#endif
+
+fileprivate extension Array<QueryItem> {
+    
+    func toUrlQueryItems() -> Array<URLQueryItem> {
+        return self.map { return URLQueryItem(
+            name: $0.name,
+            value: $0.value
+        )}
+    }
+    
+}
+
