@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "439D2512-E7F6-4A7D-8535-4658FA9174AD",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "--hydrazine-api-endpoint http:\/\/127.0.0.1:9023"
+      }
+    ]
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "HydrazineTests",
+        "name" : "HydrazineTests"
+      }
+    }
+  ],
+  "version" : 1
+}

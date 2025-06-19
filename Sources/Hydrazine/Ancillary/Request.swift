@@ -47,7 +47,7 @@ internal struct Request {
         private static let timestampResolution = 900
         
         internal static func make(
-            path: String,
+            path: borrowing String,
             apiKey: Data
         ) throws(HydrazineError) -> String {
             
