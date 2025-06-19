@@ -22,11 +22,11 @@ public struct Session: Decodable, Agent, Sendable, ProvidesSession,
     public var id: String { return self.sessionId }
     
     private enum CodingKeys: String, CodingKey {
-        case agentId = "agent_id"
+        case agentId = "beneficiary_agent_id"
         case sessionId = "session_id"
         case apiKey = "api_key"
     }
-    
+
     public init(agentId: Int, sessionId: String, apiKey: String) {
         self.agentId = agentId
         self.sessionId = sessionId
