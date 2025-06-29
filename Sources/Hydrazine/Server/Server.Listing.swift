@@ -31,7 +31,7 @@ extension Server {
         public let ipv6: String?
         public let serverId: String
         public let name: String?
-        public let map: Map?
+        public let map: MapID?
         public let disposition: Disposition
 
         private enum CodingKeys: String, CodingKey {
@@ -92,6 +92,24 @@ extension Server {
             map: .pineGap,
             disposition: .init(sequence: 1, count: 1, limit: 1, offset: 0)
         )
+        
+    }
+    
+}
+
+
+extension Array<Server.Listing> {
+    
+    public func withNetworkOperationsId(_ nid: UInt32) -> Server.Listing? {
+        
+        for listing in self {
+            if listing.networkOperationsId == nid {
+                return listing
+            }
+            continue
+        }
+        
+        return nil
         
     }
     

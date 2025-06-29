@@ -8,9 +8,10 @@ import Foundation
 
 extension UnauthenticatedAgent {
     
-    public func authenticate<C: ProvidesConfiguration>(
+    public func authenticate<C: ProvidesConfiguration, S: ProvidesSession>(
         with ticket: SteamTicket,
-        configuration: C
+        configuration: C,
+        session: S
     ) async throws(HydrazineError) -> Authentication.Result {
         
         let payload = AuthenticationPayload(
@@ -28,6 +29,31 @@ extension UnauthenticatedAgent {
         )
         
         return result
+        
+    }
+    
+    public func authenticate<O>(
+        with ticket: SteamTicket,
+        context: O
+    ) async throws(HydrazineError) -> Authentication.Result
+    where O: ProvidesConfiguration, O: ProvidesSession {
+        
+        let payload = AuthenticationPayload(
+            agent_id: Int(self.agentId),
+            steam_ticket: ticket.ticket
+        )
+        
+        let result: Authentication.Result = try await Request.make(
+            configuration: context,
+            path: authPath,
+            method: .POST,
+            queryItems: [],
+            requestBody: payload,
+            session: context
+        )
+        
+        return result
+        
         
     }
     

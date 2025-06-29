@@ -127,7 +127,7 @@ extension Request {
         ) else {
             throw HydrazineError(clientFacingFriendlyMessage: """
 The application failed to initialise components of a URL for communicating \
-with the Hydrazine API
+with the Hydrazine API at endpoint \(configuration.apiEndpoint)
 """)
         }
 

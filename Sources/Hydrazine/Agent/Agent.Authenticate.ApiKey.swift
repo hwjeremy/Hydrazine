@@ -10,13 +10,14 @@ extension UnauthenticatedAgent {
     
     /// Return an `Authentication.Result` describing whether or not the
     /// supplied `Authentication.Token` does authenticate this `Agent`.
-    public func authenticate<C: ProvidesConfiguration>(
+    public func authenticate<C: ProvidesConfiguration, S: ProvidesSession>(
         with token: Authentication.Token,
-        configuration: C
+        configuration: C,
+        session: S
     ) async throws(HydrazineError) -> Authentication.Result {
         
         let payload = AuthenticationPayloadApiKey(
-            agent_id: Int(self.agentId),
+            session_id: token.sessionId,
             hmac_bytes: tupleToBase64(token.hmac),
             time_hmac_computed: Int(token.timeHmacComputed)
         )
@@ -27,12 +28,41 @@ extension UnauthenticatedAgent {
             method: .POST,
             queryItems: [],
             requestBody: payload,
-            session: nil as (Session?)
+            session: session
         )
         
         return result
         
     }
+    
+    
+    /// Return an `Authentication.Result` describing whether or not the
+    /// supplied `Authentication.Token` does authenticate this `Agent`.
+    public func authenticate<O>(
+        with token: Authentication.Token,
+        context: O
+    ) async throws(HydrazineError) -> Authentication.Result
+    where O: ProvidesConfiguration, O: ProvidesSession {
+        
+        let payload = AuthenticationPayloadApiKey(
+            session_id: token.sessionId,
+            hmac_bytes: tupleToBase64(token.hmac),
+            time_hmac_computed: Int(token.timeHmacComputed)
+        )
+        
+        let result: Authentication.Result = try await Request.make(
+            configuration: context,
+            path: authPathApiKey,
+            method: .POST,
+            queryItems: [],
+            requestBody: payload,
+            session: context
+        )
+        
+        return result
+        
+    }
+    
     
 }
 
@@ -40,14 +70,27 @@ public struct Authentication {
     
     /// Whether or not an authentication attempt did authenticate an
     /// ``Agent``.
-    public enum Result: UInt8, Decodable, Sendable {
+    public struct Result: Decodable, Sendable {
         
-        case success = 0
-        case failure = 1
+        public let code: Code
+        public let agentId: Int?
+        
+        private enum CodingKeys: String, CodingKey {
+            case code
+            case agentId = "agent_id"
+        }
+        
+        public enum Code: UInt8, Decodable, Sendable {
+            case success = 0
+            case failure = 1
+        }
         
     }
     
     public struct Token: Sendable {
+        
+        /// The ID of the `Session` whose API key signed the HMAC
+        public let sessionId: String
         
         /// The time in integer seconds since the unix epoch at which the
         /// associated HMAC was computed, according to unauthenticated
@@ -58,7 +101,12 @@ public struct Authentication {
         /// unauthenticated ``Agent``
         public let hmac: HMACTuple
         
-        public init(timeHmacComputed: UInt32, hmac: HMACTuple) {
+        public init(
+            sessionId: String,
+            timeHmacComputed: UInt32,
+            hmac: HMACTuple
+        ) {
+            self.sessionId = sessionId
             self.timeHmacComputed = timeHmacComputed
             self.hmac = hmac
         }
@@ -77,7 +125,7 @@ fileprivate let authPathSteamTicket = "/agent/authenticate/steam-ticket"
 
 fileprivate struct AuthenticationPayloadApiKey: Encodable {
     
-    let agent_id: Int
+    let session_id: String
     let hmac_bytes: String
     let time_hmac_computed: Int
     
